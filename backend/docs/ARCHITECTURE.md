@@ -103,7 +103,7 @@ The structure is being built in steps:
 | Step | Scope | Status |
 |---|---|---|
 | 1 | `app/` package, settings, pytest setup | Done |
-| 2 | Domain layer: `Pet`, `User`, domain errors | To do |
+| 2 | Domain layer: `Pet`, `User`, domain errors | Done |
 | 3 | Application layer: repository port, `RegisterPet` and `GetPet` use cases | To do |
 | 4 | In-memory persistence adapter | To do |
 | 5 | HTTP adapter: schemas, routers, error mapping | To do |
