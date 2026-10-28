@@ -1,22 +1,37 @@
+import { Heading } from '../../components/Heading/index.tsx'
 import { useAuth } from '../../modules/auth/context/AuthContext.ts'
 import { useCurrentUser } from '../../modules/auth/hooks/useCurrentUser.ts'
-import { Button } from '../../components/Button/index.tsx'
-import { Heading } from '../../components/Heading/index.tsx'
-import { Text } from '../../components/Text/index.tsx'
+import { AppointmentList } from './components/AppointmentList/index.tsx'
+import { Header } from './components/Header/index.tsx'
+import { ScheduleAppointmentForm } from './components/ScheduleAppointmentForm/index.tsx'
 import styles from './Home.module.scss'
 
 export function Home() {
   const { logOut } = useAuth()
-  const { data: user, isError } = useCurrentUser()
+  const { data: user } = useCurrentUser()
 
   return (
-    <main className={styles.home}>
-      <Heading level={1}>Pet Health</Heading>
-      {user && <Text>Logged in as {user.email}.</Text>}
-      {isError && <Text tone="muted">Could not load your account.</Text>}
-      <Button variant="secondary" onClick={logOut}>
-        Log out
-      </Button>
-    </main>
+    <>
+      <Header email={user?.email} onLogOut={logOut} />
+      <main className={styles.home}>
+        <Heading level={1} className={styles.homeTitle}>
+          Veterinary appointments
+        </Heading>
+        <div className={styles.homeContent}>
+          <section className={styles.homePanel} aria-labelledby="schedule-title">
+            <Heading level={2} id="schedule-title" className={styles.homeSectionTitle}>
+              Schedule an appointment
+            </Heading>
+            <ScheduleAppointmentForm />
+          </section>
+          <section className={styles.homeSection} aria-labelledby="upcoming-title">
+            <Heading level={2} id="upcoming-title" className={styles.homeSectionTitle}>
+              Upcoming
+            </Heading>
+            <AppointmentList />
+          </section>
+        </div>
+      </main>
+    </>
   )
 }

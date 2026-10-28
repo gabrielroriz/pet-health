@@ -1,0 +1,21 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-8);
+  background-color: var(--color-primary);
+
+  &Brand,
+  &User {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  &Logo {
+    width: var(--space-8);
+    height: var(--space-8);
+  }
+}

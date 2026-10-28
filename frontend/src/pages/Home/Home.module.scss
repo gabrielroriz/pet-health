@@ -1,7 +1,42 @@
 .home {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-4);
+  gap: var(--space-8);
+  min-height: 100vh;
   padding: var(--space-8);
+  background-color: var(--color-surface-alt);
+
+  &Title {
+    font-size: var(--font-size-3xl);
+  }
+
+  &Content {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-8);
+
+    @media (max-width: 48rem) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  &Section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  &Panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+  }
+
+  &SectionTitle {
+    font-size: var(--font-size-xl);
+  }
 }
