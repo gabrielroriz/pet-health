@@ -1,0 +1,31 @@
+.heading {
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-weight: var(--font-weight-black);
+  line-height: var(--line-height-tight);
+  color: var(--color-heading);
+
+  &Level1 {
+    font-size: var(--font-size-5xl);
+  }
+
+  &Level2 {
+    font-size: var(--font-size-4xl);
+  }
+
+  &Level3 {
+    font-size: var(--font-size-3xl);
+  }
+
+  &Level4 {
+    font-size: var(--font-size-2xl);
+  }
+
+  &Level5 {
+    font-size: var(--font-size-xl);
+  }
+
+  &Level6 {
+    font-size: var(--font-size-lg);
+  }
+}

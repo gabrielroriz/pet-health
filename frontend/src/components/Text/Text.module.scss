@@ -1,0 +1,29 @@
+.text {
+  margin: 0;
+  font-family: var(--font-family-body);
+  line-height: var(--line-height-normal);
+
+  &Sm {
+    font-size: var(--font-size-sm);
+  }
+
+  &Md {
+    font-size: var(--font-size-md);
+  }
+
+  &Lg {
+    font-size: var(--font-size-lg);
+  }
+
+  &Default {
+    color: var(--color-text);
+  }
+
+  &Muted {
+    color: var(--color-text-muted);
+  }
+
+  &Inverse {
+    color: var(--color-text-inverse);
+  }
+}
