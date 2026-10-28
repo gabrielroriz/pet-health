@@ -2,19 +2,19 @@ from uuid import uuid4
 
 import pytest
 
+from app.adapters.persistence.in_memory import InMemoryPetRepository
 from app.application.use_cases.get_pet import GetPet
 from app.domain.errors import NotAllowed, PetNotFound
 from app.domain.pet import Pet, Species
-from tests.unit.application.fakes import FakePetRepository
 
 
 @pytest.fixture
-def pets() -> FakePetRepository:
-    return FakePetRepository()
+def pets() -> InMemoryPetRepository:
+    return InMemoryPetRepository()
 
 
 @pytest.fixture
-def pet(pets: FakePetRepository) -> Pet:
+def pet(pets: InMemoryPetRepository) -> Pet:
     pet = Pet(owner_id=uuid4(), name="Rex", species=Species.DOG)
     pets.add(pet)
     return pet
