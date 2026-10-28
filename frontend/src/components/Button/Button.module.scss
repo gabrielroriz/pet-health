@@ -39,6 +39,15 @@
     }
   }
 
+  &Highlight {
+    background-color: var(--color-highlight);
+    color: var(--color-text-inverse);
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-highlight-hover);
+    }
+  }
+
   &Secondary {
     background-color: transparent;
     border-color: var(--color-primary);

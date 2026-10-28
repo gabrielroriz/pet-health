@@ -4,6 +4,7 @@ import type { ButtonProps, ButtonSize, ButtonVariant } from './Button.types.ts'
 const variantClasses: Record<ButtonVariant, string> = {
   primary: styles.buttonPrimary,
   accent: styles.buttonAccent,
+  highlight: styles.buttonHighlight,
   secondary: styles.buttonSecondary,
 }
 

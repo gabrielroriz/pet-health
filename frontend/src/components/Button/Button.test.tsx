@@ -22,6 +22,12 @@ describe('Button', () => {
     expect(html).toMatch(/class="[^"]*buttonAccent[^"]*buttonLg[^"]*buttonFullWidth/)
   })
 
+  test('applies the highlight variant', () => {
+    expect(renderToString(<Button variant="highlight">Partner</Button>)).toMatch(
+      /class="[^"]*buttonHighlight/,
+    )
+  })
+
   test('forwards native attributes', () => {
     const html = renderToString(
       <Button type="submit" disabled>

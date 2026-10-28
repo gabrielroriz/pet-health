@@ -7,6 +7,7 @@
   --color-navy-700: #13294b;
   --color-green-700: #799c04;
   --color-green-500: #9bbe26;
+  --color-cyan-700: #0091ad;
   --color-cyan-500: #00b1d4;
   --color-cyan-100: #bde5f0;
   --color-teal-700: #006783;
@@ -14,6 +15,7 @@
   --color-slate-100: #e2e8f1;
   --color-gray-700: #333333;
   --color-gray-500: #666666;
+  --color-red-700: #b42318;
   --color-white: #ffffff;
 
   // Semantic colors
@@ -22,6 +24,7 @@
   --color-accent: var(--color-green-500);
   --color-accent-hover: var(--color-green-700);
   --color-highlight: var(--color-cyan-500);
+  --color-highlight-hover: var(--color-cyan-700);
   --color-text: var(--color-gray-700);
   --color-text-muted: var(--color-gray-500);
   --color-text-inverse: var(--color-white);
@@ -31,6 +34,7 @@
   --color-surface-alt: var(--color-mint-100);
   --color-surface-muted: var(--color-slate-100);
   --color-focus-ring: var(--color-cyan-500);
+  --color-error: var(--color-red-700);
 
   // Typography. Brandon Grotesque is a licensed font; until it is self-hosted,
   // headings fall back to Open Sans.
