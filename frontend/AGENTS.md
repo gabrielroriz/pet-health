@@ -4,6 +4,27 @@ Rules for working in the frontend. The repository-wide rules in [../AGENTS.md](.
 
 ## Rules
 
+### Project structure
+
+```
+src/
+├── app/            # app-wide setup: route table (App.tsx), query client
+├── components/     # design system
+├── modules/        # one folder per domain (auth, pets, ...)
+│   └── auth/
+│       ├── api/        # HTTP calls to the backend
+│       ├── context/    # React context and its provider
+│       ├── hooks/      # TanStack Query hooks and other domain hooks
+│       └── routes/     # route guards
+├── pages/          # one folder per screen, composed from modules and components
+├── styles/         # tokens and global styles
+└── main.tsx        # entry point: providers and router
+```
+
+- Put domain logic (API calls, queries, mutations, state) in its module, never in `app/` or at the root of `src/`. A module creates only the subfolders it needs.
+- Server data goes through TanStack Query: an `api/` function that calls the backend, wrapped by a `useQuery` or `useMutation` hook in `hooks/`. React context holds client-only state, such as the session token.
+- Pages use modules; modules must not import from `pages/`.
+
 ### Component scope is set by location
 
 Where a component lives determines who may use it.
