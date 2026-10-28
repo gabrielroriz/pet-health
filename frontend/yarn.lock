@@ -288,6 +288,18 @@
   resolved "https://registry.yarnpkg.com/@rolldown/pluginutils/-/pluginutils-1.0.1.tgz#e3fcee093fbb5ce765e1ad088ff4de2889f6f9be"
   integrity sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==
 
+"@tanstack/query-core@5.105.0":
+  version "5.105.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.105.0.tgz#c3bbf51a664d4af09b2f404b2595ccdc9a743021"
+  integrity sha512-7p56vRmT/z4UJ6sctGIdl5WRUQyUv53IUpUwEKi2g97zMbO7zh8ZsCLffGAvCPBR4xD72e3VXsDyLwXHhoNTMQ==
+
+"@tanstack/react-query@^5.105.0":
+  version "5.105.0"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.105.0.tgz#16605f0d0fcae9d179071cf48434c4adc4a59497"
+  integrity sha512-y+hMuDERvgg6ay1da0V1a6ZC0ZONt7dELxSFkqRZuwm7p1TTZs0MoXrPlBRflIpRoYjvzQVYxycnLImpFLhWrw==
+  dependencies:
+    "@tanstack/query-core" "5.105.0"
+
 "@types/chai@^5.2.2":
   version "5.2.3"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-5.2.3.tgz#8e9cd9e1c3581fa6b341a5aed5588eb285be0b4a"
@@ -468,6 +480,11 @@ colorjs.io@^0.7.0:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/colorjs.io/-/colorjs.io-0.7.1.tgz#311b356a325c2c835c5aed17f298b238d7d9a5a1"
   integrity sha512-LY7OHnJZxHwT5UlzNa9bbhHHDbzB6yE5+3MIPwJEQKRvSCt/T4G7epsj+9j2BExUIIfXFIJGsIXUKdfrK9Q5tA==
+
+cookie@^1.0.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-1.1.1.tgz#3bb9bdfc82369db9c2f69c93c9c3ceb310c88b3c"
+  integrity sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==
 
 csstype@^3.2.2:
   version "3.2.3"
@@ -675,6 +692,14 @@ react-dom@^19.3.1:
   dependencies:
     scheduler "^0.28.0"
 
+react-router@^7.18.5:
+  version "7.18.5"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.18.5.tgz#808611f9f8675fe4506699815168822f4d9f3ee3"
+  integrity sha512-dTgvcXDOrLPrlLHrcZAqWveiK1hMSqN+rGAJzegP8HtmNkfRxOoshGWBNX3ZJ0cZjOHkRdlUJtaIhZMLLyGyPw==
+  dependencies:
+    cookie "^1.0.1"
+    set-cookie-parser "^2.6.0"
+
 react@^19.3.1:
   version "19.3.1"
   resolved "https://registry.yarnpkg.com/react/-/react-19.3.1.tgz#26e9523fc36ea06be5050ebb780249a133260ad7"
@@ -857,6 +882,11 @@ scheduler@^0.28.0:
   version "0.28.0"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.28.0.tgz#03d3ca348aeaf8b7502f64468f217b27523f9695"
   integrity sha512-juorfCmIkIw8tT+p5BXSm6PJjQF/ycEYmKyzURCIt/RaZIhL+PulbQ9Yu2z1HdOJDdqDTlxA1+xKBmHXJsczAw==
+
+set-cookie-parser@^2.6.0:
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/set-cookie-parser/-/set-cookie-parser-2.7.3.tgz#ded8e573414ceb6f5752f610dc9751f4eda0295d"
+  integrity sha512-irZHtTqurLna57KQG/s+fzOwv/J6XSH4cs8M/vsrY3uCaQ3S6+QJguAH0WdN47SXlk82voMZ4naWMQf8fdEoIg==
 
 "source-map-js@>=0.6.2 <2.0.0", source-map-js@^1.2.2:
   version "1.2.2"
