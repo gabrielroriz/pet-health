@@ -1,6 +1,9 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from app.config import settings
+
+app = FastAPI(title=settings.app_name)
+
 
 @app.get("/")
 def read_root():
