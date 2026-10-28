@@ -2,3 +2,40 @@
 
 ### Root
 GET {{baseUrl}}/
+
+### Register a pet
+# @name registerPet
+POST {{baseUrl}}/pets
+Content-Type: application/json
+
+{
+  "name": "Rex",
+  "species": "dog",
+  "birth_date": "2020-05-01",
+  "breed": "Beagle"
+}
+
+### Get the registered pet (run "Register a pet" first)
+GET {{baseUrl}}/pets/{{registerPet.response.body.$.id}}
+
+### Invalid payload: unknown species (422)
+POST {{baseUrl}}/pets
+Content-Type: application/json
+
+{
+  "name": "Rex",
+  "species": "dragon"
+}
+
+### Domain rule: birth date in the future (422)
+POST {{baseUrl}}/pets
+Content-Type: application/json
+
+{
+  "name": "Rex",
+  "species": "dog",
+  "birth_date": "2999-01-01"
+}
+
+### Unknown pet (404)
+GET {{baseUrl}}/pets/00000000-0000-0000-0000-000000000000

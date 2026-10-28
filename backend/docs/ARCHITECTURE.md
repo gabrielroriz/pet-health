@@ -74,12 +74,12 @@ backend/
 5. The router converts the result into a response schema. If a domain error was raised instead, `errors.py` turns it into an HTTP response.
 
 ```python
-@router.post("/pets", response_model=PetResponse, status_code=201)
+@router.post("", response_model=PetResponse, status_code=status.HTTP_201_CREATED)
 def register_pet(
-    payload: RegisterPetRequest,                       # payload validation
-    user: User = Depends(get_current_user),            # authentication
-    use_case: RegisterPet = Depends(get_register_pet), # wiring
-):
+    payload: RegisterPetRequest,                                  # payload validation
+    user: Annotated[User, Depends(get_current_user)],             # authentication
+    use_case: Annotated[RegisterPet, Depends(get_register_pet)],  # wiring
+) -> PetResponse:
     pet = use_case.execute(owner_id=user.id, **payload.model_dump())  # business rules
     return PetResponse.from_domain(pet)
 ```
@@ -106,7 +106,7 @@ The structure is being built in steps:
 | 2 | Domain layer: `Pet`, `User`, domain errors | Done |
 | 3 | Application layer: repository port, `RegisterPet` and `GetPet` use cases | Done |
 | 4 | In-memory persistence adapter | Done |
-| 5 | HTTP adapter: schemas, routers, error mapping | To do |
+| 5 | HTTP adapter: schemas, routers, error mapping | Done |
 | 6 | Authentication | To do |
 | 7 | Backend CI: lint, tests, import rules | To do |
 | 8 | SQLAlchemy persistence adapter | Later |
