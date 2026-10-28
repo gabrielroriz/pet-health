@@ -4,7 +4,7 @@
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
-fastapi dev app/main.py
+fastapi dev
 ```
 
 The API runs at http://localhost:8000 and the docs at http://localhost:8000/docs.
