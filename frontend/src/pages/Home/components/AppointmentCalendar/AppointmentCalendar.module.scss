@@ -1,0 +1,110 @@
+.appointmentCalendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  &Toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  &Month {
+    color: var(--color-heading);
+    text-transform: capitalize;
+  }
+
+  &Nav {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  // 1px gaps over a slate background draw the grid lines.
+  &Grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid var(--color-surface-muted);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface-muted);
+  }
+
+  &Row {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 1px;
+  }
+
+  &Weekday {
+    padding: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    text-align: center;
+    color: var(--color-heading);
+    background-color: var(--color-surface);
+  }
+
+  &Day {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-height: calc(var(--space-12) * 2);
+    padding: var(--space-2);
+    background-color: var(--color-surface);
+
+    &Outside {
+      color: var(--color-text-muted);
+      background-color: var(--color-surface-alt);
+    }
+  }
+
+  &Date {
+    display: inline-grid;
+    place-items: center;
+    width: var(--space-6);
+    height: var(--space-6);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+
+    &[aria-current='date'] {
+      background-color: var(--color-highlight);
+      color: var(--color-primary);
+    }
+  }
+
+  &Events {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &Event {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-1);
+    border-left: 3px solid var(--color-highlight);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-tight);
+    color: var(--color-primary);
+    background-color: var(--color-surface-alt);
+
+    &Pet,
+    &Time {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    &Pet {
+      font-weight: var(--font-weight-semibold);
+    }
+  }
+}
