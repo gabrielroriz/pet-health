@@ -1,6 +1,6 @@
 from uuid import uuid4
 
-from app.adapters.security.in_memory_tokens import InMemoryTokenService
+from app.adapters.security.in_memory.in_memory_token_service import InMemoryTokenService
 
 
 def test_verifies_issued_token():

@@ -2,10 +2,10 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.adapters.http.auth import get_current_user
-from app.adapters.http.dependencies import get_log_in
-from app.adapters.http.schemas import LoginRequest, TokenResponse, UserResponse
-from app.application.use_cases.log_in import LogIn
+from app.adapters.http.dependencies.auth_dependencies import get_current_user
+from app.adapters.http.dependencies.auth_dependencies import get_log_in
+from app.adapters.http.schemas.auth_schemas import LoginRequest, TokenResponse, UserResponse
+from app.application.use_cases.auth.log_in import LogIn
 from app.domain.user import User
 
 router = APIRouter(prefix="/auth", tags=["auth"])

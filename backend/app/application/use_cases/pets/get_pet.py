@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from app.application.ports import PetRepository
+from app.application.ports.repositories.pet_repository import PetRepository
 from app.domain.errors import PetNotFound
 from app.domain.pet import Pet
 

@@ -2,9 +2,9 @@ from uuid import uuid4
 
 import pytest
 
-from app.adapters.persistence.in_memory import InMemoryUserRepository
-from app.adapters.security.in_memory_tokens import InMemoryTokenService
-from app.application.use_cases.authenticate import Authenticate
+from app.adapters.persistence.in_memory.in_memory_user_repository import InMemoryUserRepository
+from app.adapters.security.in_memory.in_memory_token_service import InMemoryTokenService
+from app.application.use_cases.auth.authenticate import Authenticate
 from app.domain.errors import NotAuthenticated
 from app.domain.user import User
 

@@ -1,8 +1,8 @@
 import pytest
 
-from app.adapters.persistence.in_memory import InMemoryUserRepository
-from app.adapters.security.in_memory_tokens import InMemoryTokenService
-from app.application.use_cases.log_in import LogIn
+from app.adapters.persistence.in_memory.in_memory_user_repository import InMemoryUserRepository
+from app.adapters.security.in_memory.in_memory_token_service import InMemoryTokenService
+from app.application.use_cases.auth.log_in import LogIn
 from app.domain.errors import InvalidUserData
 
 

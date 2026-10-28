@@ -3,8 +3,8 @@ from uuid import uuid4
 
 import pytest
 
-from app.adapters.persistence.in_memory import InMemoryPetRepository
-from app.application.use_cases.register_pet import RegisterPet
+from app.adapters.persistence.in_memory.in_memory_pet_repository import InMemoryPetRepository
+from app.application.use_cases.pets.register_pet import RegisterPet
 from app.domain.errors import InvalidPetData
 from app.domain.pet import Species
 

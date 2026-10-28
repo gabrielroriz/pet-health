@@ -36,17 +36,16 @@ backend/
 │   ├── config.py                # Settings read from environment variables or .env
 │   ├── domain/                  # Entities, value objects, business rules, domain errors
 │   ├── application/
-│   │   ├── ports.py             # Protocols the use cases depend on (repositories, token service, ...)
-│   │   └── use_cases/           # One class per use case, with an execute() method
+│   │   ├── ports/               # Protocols the use cases depend on: repositories/ and services/, one file per port
+│   │   └── use_cases/           # One class per use case, with an execute() method, grouped by domain (pets/, auth/)
 │   └── adapters/
 │       ├── http/                # Inbound adapter: FastAPI
 │       │   ├── routers/         # Endpoints: parse the request, call a use case, map the response
-│       │   ├── schemas.py       # Pydantic request and response models
-│       │   ├── auth.py          # get_current_user dependency
-│       │   ├── dependencies.py  # Depends() factories that build use cases
-│       │   └── errors.py        # Turns domain errors into HTTP responses
-│       ├── persistence/         # Outbound adapters that implement the repository ports
-│       └── security/            # Outbound adapters for tokens and password hashing
+│       │   ├── schemas/         # Pydantic request and response models, one file per domain
+│       │   ├── dependencies/    # Depends() factories that build use cases, plus get_current_user
+│       │   └── error_handlers.py # Turns domain errors into HTTP responses
+│       ├── persistence/         # Outbound adapters that implement the repository ports, one folder per technology (in_memory/, ...)
+│       └── security/            # Outbound adapters for tokens and password hashing, one folder per technology
 └── tests/
     ├── unit/                    # Domain and use cases, tested with in-memory adapters
     └── integration/             # HTTP tests through FastAPI's TestClient
@@ -56,14 +55,14 @@ backend/
 
 | Concern | Location | What it covers |
 |---|---|---|
-| Payload validation | `adapters/http/schemas.py` | The shape and format of a request: types, required fields, lengths, formats. |
+| Payload validation | `adapters/http/schemas/` | The shape and format of a request: types, required fields, lengths, formats. |
 | Business validation | `domain/` | Rules that hold however a request arrives, such as "a pet's birth date can't be in the future". |
-| Authentication | `adapters/http/auth.py` | Reads the bearer token and resolves the current user through the `Authenticate` use case. See [Authentication](#authentication). |
+| Authentication | `adapters/http/dependencies/auth_dependencies.py` | Reads the bearer token and resolves the current user through the `Authenticate` use case. See [Authentication](#authentication). |
 | Authorization | `application/use_cases/` | Decides whether the current user may act on a resource, and raises `NotAllowed` if not. |
-| Error mapping | `adapters/http/errors.py` | Turns domain errors into status codes such as 404, 403 and 422. The domain never raises `HTTPException`. |
+| Error mapping | `adapters/http/error_handlers.py` | Turns domain errors into status codes such as 404, 403 and 422. The domain never raises `HTTPException`. |
 | Persistence | `adapters/persistence/` | Implements the repository protocols. Use cases see only the protocols. |
 | Configuration | `config.py` | Settings from environment variables or `.env`, read once into `settings`. |
-| Wiring | `main.py`, `adapters/http/dependencies.py` | FastAPI's `Depends` builds use cases from concrete adapters. No DI framework is used. |
+| Wiring | `main.py`, `adapters/http/dependencies/` | FastAPI's `Depends` builds use cases from concrete adapters. No DI framework is used. |
 
 ## A request end to end
 
@@ -71,7 +70,7 @@ backend/
 2. The `get_current_user` dependency authenticates the caller.
 3. A dependency factory builds the use case with its concrete adapters.
 4. The use case runs the business logic: it checks authorization, applies domain rules and talks to repositories through ports.
-5. The router converts the result into a response schema. If a domain error was raised instead, `errors.py` turns it into an HTTP response.
+5. The router converts the result into a response schema. If a domain error was raised instead, `error_handlers.py` turns it into an HTTP response.
 
 ```python
 @router.post("", response_model=PetResponse, status_code=status.HTTP_201_CREATED)
@@ -89,11 +88,11 @@ Routers are the only code that knows about HTTP. Use cases can be tested without
 ## Adding a feature
 
 1. Model the concept and its rules in `domain/`, with any new errors in `domain/errors.py`.
-2. Declare what the use case needs from outside as a protocol in `application/ports.py`.
-3. Write the use case in `application/use_cases/` and unit-test it with an in-memory adapter.
-4. Implement the port in `adapters/persistence/` (or another outbound adapter).
-5. Add the request and response schemas, the router and the dependency factory in `adapters/http/`, and register the router in `main.py`.
-6. Map any new domain errors in `adapters/http/errors.py`.
+2. Declare what the use case needs from outside as a protocol in `application/ports/`: repositories go in `ports/repositories/<entity>_repository.py`.
+3. Write the use case in `application/use_cases/<domain>/` and unit-test it with an in-memory adapter.
+4. Implement the port in `adapters/persistence/<technology>/<technology>_<entity>_repository.py` (or another outbound adapter).
+5. Add the request and response schemas, the router and the dependency factory in `adapters/http/` (`<entity>_schemas.py`, `<entity>_routes.py`, `<entity>_dependencies.py`), and register the router in `main.py`.
+6. Map any new domain errors in `adapters/http/error_handlers.py`.
 7. Add integration tests and example requests to `api.http`.
 
 ## Authentication
@@ -110,11 +109,11 @@ How it fits the layers:
 
 | Piece | Location |
 |---|---|
-| `UserRepository` and `TokenService` ports | `application/ports.py` |
-| `LogIn` (find or create the user, issue a token) and `Authenticate` (token to user) use cases | `application/use_cases/` |
-| In-memory user repository and token service | `adapters/persistence/in_memory.py`, `adapters/security/in_memory_tokens.py` |
-| Bearer header parsing and `get_current_user` | `adapters/http/auth.py` |
-| Login and "me" routes | `adapters/http/routers/auth.py` |
+| `UserRepository` and `TokenService` ports | `application/ports/repositories/user_repository.py`, `application/ports/services/token_service.py` |
+| `LogIn` (find or create the user, issue a token) and `Authenticate` (token to user) use cases | `application/use_cases/auth/` |
+| In-memory user repository and token service | `adapters/persistence/in_memory/in_memory_user_repository.py`, `adapters/security/in_memory/in_memory_token_service.py` |
+| Bearer header parsing and `get_current_user` | `adapters/http/dependencies/auth_dependencies.py` |
+| Login and "me" routes | `adapters/http/routers/auth_routes.py` |
 
 To switch to a real auth method, replace the token service adapter, for example with one that verifies JWTs from your own login or from a provider such as Auth0 or Supabase. Then replace or remove `LogIn` and the login route. Routes and use cases that depend on `get_current_user` don't change.
 

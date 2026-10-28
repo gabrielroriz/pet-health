@@ -1,7 +1,7 @@
 from datetime import date
 from uuid import UUID
 
-from app.application.ports import PetRepository
+from app.application.ports.repositories.pet_repository import PetRepository
 from app.domain.pet import Pet, Species
 
 

@@ -3,11 +3,11 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, status
 
-from app.adapters.http.auth import get_current_user
-from app.adapters.http.dependencies import get_get_pet, get_register_pet
-from app.adapters.http.schemas import PetResponse, RegisterPetRequest
-from app.application.use_cases.get_pet import GetPet
-from app.application.use_cases.register_pet import RegisterPet
+from app.adapters.http.dependencies.auth_dependencies import get_current_user
+from app.adapters.http.dependencies.pet_dependencies import get_get_pet, get_register_pet
+from app.adapters.http.schemas.pet_schemas import PetResponse, RegisterPetRequest
+from app.application.use_cases.pets.get_pet import GetPet
+from app.application.use_cases.pets.register_pet import RegisterPet
 from app.domain.user import User
 
 router = APIRouter(prefix="/pets", tags=["pets"])

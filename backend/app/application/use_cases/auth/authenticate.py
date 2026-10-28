@@ -1,4 +1,5 @@
-from app.application.ports import TokenService, UserRepository
+from app.application.ports.services.token_service import TokenService
+from app.application.ports.repositories.user_repository import UserRepository
 from app.domain.errors import NotAuthenticated
 from app.domain.user import User
 
