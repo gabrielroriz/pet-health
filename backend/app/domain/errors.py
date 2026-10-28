@@ -16,3 +16,7 @@ class PetNotFound(DomainError):
 
 class NotAllowed(DomainError):
     pass
+
+
+class NotAuthenticated(DomainError):
+    pass

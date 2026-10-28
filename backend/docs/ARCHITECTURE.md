@@ -58,7 +58,7 @@ backend/
 |---|---|---|
 | Payload validation | `adapters/http/schemas.py` | The shape and format of a request: types, required fields, lengths, formats. |
 | Business validation | `domain/` | Rules that hold however a request arrives, such as "a pet's birth date can't be in the future". |
-| Authentication | `adapters/http/auth.py` | Reads the token through the `TokenService` port and returns the current user. |
+| Authentication | `adapters/http/auth.py` | Reads the bearer token and resolves the current user through the `Authenticate` use case. See [Authentication](#authentication). |
 | Authorization | `application/use_cases/` | Decides whether the current user may act on a resource, and raises `NotAllowed` if not. |
 | Error mapping | `adapters/http/errors.py` | Turns domain errors into status codes such as 404, 403 and 422. The domain never raises `HTTPException`. |
 | Persistence | `adapters/persistence/` | Implements the repository protocols. Use cases see only the protocols. |
@@ -96,6 +96,28 @@ Routers are the only code that knows about HTTP. Use cases can be tested without
 6. Map any new domain errors in `adapters/http/errors.py`.
 7. Add integration tests and example requests to `api.http`.
 
+## Authentication
+
+The auth method hasn't been chosen yet, so the API ships with a **development login** that makes it easy to try the API locally:
+
+1. `POST /auth/login` with `{"email": "..."}` returns a token. There's no password, and an unknown email creates a new user.
+2. Protected routes expect the header `Authorization: Bearer <token>`. In the docs at `/docs`, use the **Authorize** button.
+3. `GET /auth/me` returns the logged-in user.
+
+Tokens are random strings kept in memory by `InMemoryTokenService`, so restarting the server logs everyone out. **This login is not safe for production.**
+
+How it fits the layers:
+
+| Piece | Location |
+|---|---|
+| `UserRepository` and `TokenService` ports | `application/ports.py` |
+| `LogIn` (find or create the user, issue a token) and `Authenticate` (token to user) use cases | `application/use_cases/` |
+| In-memory user repository and token service | `adapters/persistence/in_memory.py`, `adapters/security/in_memory_tokens.py` |
+| Bearer header parsing and `get_current_user` | `adapters/http/auth.py` |
+| Login and "me" routes | `adapters/http/routers/auth.py` |
+
+To switch to a real auth method, replace the token service adapter, for example with one that verifies JWTs from your own login or from a provider such as Auth0 or Supabase. Then replace or remove `LogIn` and the login route. Routes and use cases that depend on `get_current_user` don't change.
+
 ## Current status
 
 The structure is being built in steps:
@@ -107,7 +129,7 @@ The structure is being built in steps:
 | 3 | Application layer: repository port, `RegisterPet` and `GetPet` use cases | Done |
 | 4 | In-memory persistence adapter | Done |
 | 5 | HTTP adapter: schemas, routers, error mapping | Done |
-| 6 | Authentication | To do |
+| 6 | Authentication: in-memory development login | Done |
 | 7 | Backend CI: lint, tests, import rules | To do |
 | 8 | SQLAlchemy persistence adapter | Later |
 

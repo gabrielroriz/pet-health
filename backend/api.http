@@ -3,9 +3,25 @@
 ### Root
 GET {{baseUrl}}/
 
+### Log in (development only: no password, unknown emails get a new user)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "ana@example.com"
+}
+
+@token = {{login.response.body.$.access_token}}
+
+### Current user (run "Log in" first, for this and every request below)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
 ### Register a pet
 # @name registerPet
 POST {{baseUrl}}/pets
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -17,9 +33,11 @@ Content-Type: application/json
 
 ### Get the registered pet (run "Register a pet" first)
 GET {{baseUrl}}/pets/{{registerPet.response.body.$.id}}
+Authorization: Bearer {{token}}
 
 ### Invalid payload: unknown species (422)
 POST {{baseUrl}}/pets
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -29,6 +47,7 @@ Content-Type: application/json
 
 ### Domain rule: birth date in the future (422)
 POST {{baseUrl}}/pets
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -39,3 +58,7 @@ Content-Type: application/json
 
 ### Unknown pet (404)
 GET {{baseUrl}}/pets/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### Missing token (401)
+GET {{baseUrl}}/auth/me

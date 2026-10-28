@@ -2,24 +2,17 @@ from datetime import date, timedelta
 from uuid import uuid4
 
 import pytest
-from fastapi.testclient import TestClient
 
-from app.adapters.http.auth import PLACEHOLDER_USER
-from app.domain.pet import Pet, Species
-from app.main import create_app
+from tests.integration.conftest import log_in
 
 
-@pytest.fixture
-def client() -> TestClient:
-    return TestClient(create_app())
+def register(client, headers, **overrides):
+    payload = {"name": "Rex", "species": "dog"} | overrides
+    return client.post("/pets", json=payload, headers=headers)
 
 
-def register(client: TestClient, **overrides):
-    return client.post("/pets", json={"name": "Rex", "species": "dog"} | overrides)
-
-
-def test_registers_pet(client):
-    response = register(client, birth_date="2020-05-01", breed="Beagle")
+def test_registers_pet_for_logged_in_user(client, auth_headers):
+    response = register(client, auth_headers, birth_date="2020-05-01", breed="Beagle")
 
     assert response.status_code == 201
     body = response.json()
@@ -27,13 +20,14 @@ def test_registers_pet(client):
     assert body["species"] == "dog"
     assert body["birth_date"] == "2020-05-01"
     assert body["breed"] == "Beagle"
-    assert body["owner_id"] == str(PLACEHOLDER_USER.id)
+    me = client.get("/auth/me", headers=auth_headers).json()
+    assert body["owner_id"] == me["id"]
 
 
-def test_gets_registered_pet(client):
-    pet_id = register(client).json()["id"]
+def test_gets_registered_pet(client, auth_headers):
+    pet_id = register(client, auth_headers).json()["id"]
 
-    response = client.get(f"/pets/{pet_id}")
+    response = client.get(f"/pets/{pet_id}", headers=auth_headers)
 
     assert response.status_code == 200
     assert response.json()["id"] == pet_id
@@ -49,29 +43,35 @@ def test_gets_registered_pet(client):
         {"name": "Rex", "species": "dog", "color": "brown"},
     ],
 )
-def test_rejects_invalid_payload(client, payload):
-    assert client.post("/pets", json=payload).status_code == 422
+def test_rejects_invalid_payload(client, auth_headers, payload):
+    assert client.post("/pets", json=payload, headers=auth_headers).status_code == 422
 
 
-def test_rejects_pet_breaking_domain_rules(client):
+def test_rejects_pet_breaking_domain_rules(client, auth_headers):
     tomorrow = (date.today() + timedelta(days=1)).isoformat()
 
-    response = register(client, birth_date=tomorrow)
+    response = register(client, auth_headers, birth_date=tomorrow)
 
     assert response.status_code == 422
     assert response.json() == {"detail": "Birth date must not be in the future."}
 
 
-def test_returns_404_for_unknown_pet(client):
-    assert client.get(f"/pets/{uuid4()}").status_code == 404
+def test_returns_404_for_unknown_pet(client, auth_headers):
+    assert client.get(f"/pets/{uuid4()}", headers=auth_headers).status_code == 404
 
 
-def test_returns_422_for_malformed_pet_id(client):
-    assert client.get("/pets/not-a-uuid").status_code == 422
+def test_returns_422_for_malformed_pet_id(client, auth_headers):
+    assert client.get("/pets/not-a-uuid", headers=auth_headers).status_code == 422
 
 
-def test_returns_403_for_another_users_pet(client):
-    pet = Pet(owner_id=uuid4(), name="Mia", species=Species.CAT)
-    client.app.state.pets.add(pet)
+def test_returns_403_for_another_users_pet(client, auth_headers):
+    pet_id = register(client, log_in(client, "bob@example.com")).json()["id"]
 
-    assert client.get(f"/pets/{pet.id}").status_code == 403
+    assert client.get(f"/pets/{pet_id}", headers=auth_headers).status_code == 403
+
+
+def test_pet_routes_require_token(client, auth_headers):
+    pet_id = register(client, auth_headers).json()["id"]
+
+    assert register(client, headers={}).status_code == 401
+    assert client.get(f"/pets/{pet_id}").status_code == 401
