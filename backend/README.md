@@ -16,3 +16,5 @@ Settings are read from environment variables or a `.env` file (see `app/config.p
 ```bash
 pytest
 ```
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the internal structure.
