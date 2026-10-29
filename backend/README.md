@@ -84,8 +84,18 @@ erDiagram
 - A hospital belongs to at most one network, and a veterinarian can work at several hospitals through `hospital_veterinarians`.
 - `(hospital_id, veterinarian_id)` in `appointments` is one foreign key to `hospital_veterinarians`, so an appointment's veterinarian always works at its hospital.
 - No two scheduled appointments may overlap for the same veterinarian or the same pet, at any hospital. Two exclusion constraints enforce it, and cancelled appointments don't count. One appointment may start exactly when another ends.
-- Every booking bumps the veterinarian's `agenda_version`, which works as an optimistic lock against concurrent bookings. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#double-booking-protection).
+- Every booking bumps the veterinarian's `agenda_version`, which works as an optimistic lock against concurrent bookings. See [Double-booking protection](#double-booking-protection).
 - Check constraints: `species` and `status` take only the listed values, and `ends_at` comes after `starts_at`.
+
+## Double-booking protection
+
+A veterinarian or a pet can't have two overlapping scheduled appointments. Three layers enforce it, each answering `409 Conflict`:
+
+1. **Domain check:** rejects the booking if the veterinarian or the pet is already busy. [appointment.py:56-74](app/domain/appointment.py#L56-L74), [schedule_appointment.py:83-86](app/application/use_cases/appointments/schedule_appointment.py#L83-L86)
+2. **Optimistic lock:** saves only if the veterinarian's `agenda_version` is unchanged; the loser of a race retries, up to 3 times. [schedule_appointment.py:68-82](app/application/use_cases/appointments/schedule_appointment.py#L68-L82), [sqlalchemy_appointment_repository.py:36-53](app/adapters/persistence/sqlalchemy/sqlalchemy_appointment_repository.py#L36-L53)
+3. **Database constraints:** PostgreSQL exclusion constraints reject any overlap the code missed, such as the same pet booked with two veterinarians at once. [0001_create_initial_schema.py:137-155](migrations/versions/0001_create_initial_schema.py#L137-L155), [sqlalchemy_tables.py:88-97](app/adapters/persistence/sqlalchemy/sqlalchemy_tables.py#L88-L97), [sqlalchemy_appointment_repository.py:92-113](app/adapters/persistence/sqlalchemy/sqlalchemy_appointment_repository.py#L92-L113)
+
+Cancelled appointments don't count, and back-to-back appointments are allowed. Details in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#double-booking-protection).
 
 ## Migrations
 
