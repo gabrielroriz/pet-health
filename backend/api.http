@@ -35,7 +35,7 @@ Content-Type: application/json
 GET {{baseUrl}}/pets/{{registerPet.response.body.$.id}}
 Authorization: Bearer {{token}}
 
-### List my pets (python -m app.seed gives ana@example.com two pets)
+### List my pets (python -m app.seed gives ana@example.com and bob@example.com a few pets)
 # @name pets
 GET {{baseUrl}}/pets
 Authorization: Bearer {{token}}

@@ -1,8 +1,10 @@
-"""Development data: a hospital network, hospitals, veterinarians and a user with pets.
+"""Development data: a hospital network, hospitals, veterinarians, and users with their pets.
 
 Run it with `python -m app.seed` after migrating. Running it again changes nothing.
 """
 
+from datetime import date
+from typing import NamedTuple
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -57,9 +59,31 @@ VETERINARIANS = [
     ),
 ]
 
-# Log in with this email to use the pets below.
-USER_EMAIL = "ana@example.com"
-PETS = [("Thor", Species.DOG), ("Luna", Species.CAT)]
+
+# A pet to create; its owner is the user it's listed under.
+class SeedPet(NamedTuple):
+    name: str
+    species: Species
+    breed: str | None = None
+    birth_date: date | None = None
+
+
+# Log in with one of these emails to book appointments for its pets.
+PETS_BY_OWNER = {
+    "ana@example.com": [
+        SeedPet("Thor", Species.DOG, "Golden Retriever", date(2019, 4, 12)),
+        SeedPet("Luna", Species.CAT, "Siamese", date(2021, 8, 3)),
+        SeedPet("Mel", Species.RABBIT, "Mini Lop", date(2023, 2, 20)),
+        SeedPet("Kiwi", Species.BIRD, "Cockatiel", date(2022, 11, 5)),
+    ],
+    "bob@example.com": [
+        SeedPet("Rex", Species.DOG, "Beagle", date(2020, 5, 1)),
+        # Mixed breed, so no breed.
+        SeedPet("Mia", Species.CAT, birth_date=date(2018, 9, 15)),
+        # Adopted as an adult, birth date unknown.
+        SeedPet("Shelly", Species.OTHER, "Red-eared slider turtle"),
+    ],
+}
 
 
 def seed(session: Session) -> None:
@@ -75,19 +99,20 @@ def seed(session: Session) -> None:
         if veterinarians.get(veterinarian.id) is None:
             veterinarians.add(veterinarian)
 
-    # The development user, reused if they already logged in.
     users = SqlAlchemyUserRepository(session)
-    user = users.get_by_email(USER_EMAIL)
-    if user is None:
-        user = User(email=USER_EMAIL)
-        users.add(user)
-
-    # Their pets, skipping any they already have with the same name.
     pets = SqlAlchemyPetRepository(session)
-    existing = {pet.name for pet in pets.list_by_owner(user.id)}
-    for name, species in PETS:
-        if name not in existing:
-            pets.add(Pet(owner_id=user.id, name=name, species=species))
+    for email, owner_pets in PETS_BY_OWNER.items():
+        # The owner, reused if they already logged in.
+        user = users.get_by_email(email)
+        if user is None:
+            user = User(email=email)
+            users.add(user)
+
+        # Their pets, skipping any they already have with the same name.
+        existing = {pet.name for pet in pets.list_by_owner(user.id)}
+        for pet in owner_pets:
+            if pet.name not in existing:
+                pets.add(Pet(owner_id=user.id, **pet._asdict()))
 
 
 if __name__ == "__main__":

@@ -36,7 +36,7 @@ backend/
 ├── app/
 │   ├── main.py                  # Composition root: builds the app, registers routers and error handlers
 │   ├── config.py                # Settings read from environment variables or .env
-│   ├── seed.py                  # Development data: a hospital network, hospitals, veterinarians, a user and pets
+│   ├── seed.py                  # Development data: a hospital network, hospitals, veterinarians, users and their pets
 │   ├── domain/                  # Entities, value objects, business rules, domain errors
 │   ├── application/
 │   │   ├── ports/               # Protocols the use cases depend on: repositories/ and services/, one file per port

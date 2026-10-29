@@ -13,7 +13,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements-dev.txt
 alembic upgrade head
-python -m app.seed   # optional: hospitals, veterinarians, and ana@example.com with two pets
+python -m app.seed   # optional: hospitals, veterinarians, and ana@example.com and bob@example.com with pets
 fastapi dev
 ```
 
