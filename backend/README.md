@@ -26,6 +26,67 @@ DB_PORT=5435 docker compose up -d db
 echo 'DATABASE_URL=postgresql+psycopg://pet_health:pet_health@localhost:5435/pet_health' > .env
 ```
 
+## Data model
+
+```mermaid
+erDiagram
+    users ||--o{ pets : owns
+    users ||--o{ appointments : books
+    pets ||--o{ appointments : "is seen in"
+    hospital_networks |o--o{ hospitals : groups
+    hospitals ||--o{ hospital_veterinarians : employs
+    veterinarians ||--o{ hospital_veterinarians : "works at"
+    hospital_veterinarians ||--o{ appointments : "takes place with"
+
+    users {
+        uuid id PK
+        varchar email UK
+    }
+    pets {
+        uuid id PK
+        uuid owner_id FK
+        varchar name
+        varchar species "dog, cat, bird, rabbit or other"
+        date birth_date "nullable"
+        varchar breed "nullable"
+    }
+    hospital_networks {
+        uuid id PK
+        varchar name UK
+    }
+    hospitals {
+        uuid id PK
+        varchar name
+        uuid network_id FK "nullable"
+    }
+    veterinarians {
+        uuid id PK
+        varchar name
+        int agenda_version "optimistic lock"
+    }
+    hospital_veterinarians {
+        uuid hospital_id PK, FK
+        uuid veterinarian_id PK, FK
+    }
+    appointments {
+        uuid id PK
+        uuid owner_id FK "the user who booked it"
+        uuid pet_id FK
+        uuid hospital_id FK "with veterinarian_id"
+        uuid veterinarian_id FK "with hospital_id"
+        timestamptz starts_at
+        timestamptz ends_at
+        varchar reason
+        varchar status "scheduled or cancelled"
+    }
+```
+
+- A hospital belongs to at most one network, and a veterinarian can work at several hospitals through `hospital_veterinarians`.
+- `(hospital_id, veterinarian_id)` in `appointments` is one foreign key to `hospital_veterinarians`, so an appointment's veterinarian always works at its hospital.
+- No two scheduled appointments may overlap for the same veterinarian or the same pet, at any hospital. Two exclusion constraints enforce it, and cancelled appointments don't count. One appointment may start exactly when another ends.
+- Every booking bumps the veterinarian's `agenda_version`, which works as an optimistic lock against concurrent bookings. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#double-booking-protection).
+- Check constraints: `species` and `status` take only the listed values, and `ends_at` comes after `starts_at`.
+
 ## Migrations
 
 The schema lives in `migrations/`. After changing `app/adapters/persistence/sqlalchemy/sqlalchemy_tables.py`:
