@@ -19,11 +19,11 @@ fastapi dev
 
 The API runs at http://localhost:8000 and the docs at http://localhost:8000/docs.
 
-Settings are read from environment variables or a `.env` file (see `app/config.py`). `DATABASE_URL` defaults to `postgresql+psycopg://pet_health:pet_health@localhost:5432/pet_health`. If port 5432 is taken, start the database on another one and point `DATABASE_URL` at it:
+Settings are read from environment variables or a `.env` file (see `app/config.py`). `DATABASE_URL` defaults to `postgresql+psycopg://pet_health:pet_health@localhost:5435/pet_health`, the host port Docker Compose publishes the database on. If port 5435 is taken, start the database on another one and point `DATABASE_URL` at it:
 
 ```bash
-DB_PORT=5435 docker compose up -d db
-echo 'DATABASE_URL=postgresql+psycopg://pet_health:pet_health@localhost:5435/pet_health' > .env
+DB_PORT=5436 docker compose up -d db
+echo 'DATABASE_URL=postgresql+psycopg://pet_health:pet_health@localhost:5436/pet_health' > .env
 ```
 
 ## Data model
@@ -105,7 +105,7 @@ From the repository root:
 docker compose up --build
 ```
 
-This starts PostgreSQL, runs the migrations, seeds the development data, serves the API with Uvicorn at http://localhost:8000, and serves the frontend with the Vite dev server at http://localhost:5173. Uvicorn reloads when files in `app/` change, and Vite when files in `frontend/src/` change. Set `BACKEND_PORT`, `DB_PORT` or `FRONTEND_PORT` to use other host ports (`BACKEND_PORT=8001 DB_PORT=5435 FRONTEND_PORT=5174 docker compose up`). Rebuild after changing `requirements.txt` or `frontend/package.json`.
+This starts PostgreSQL, runs the migrations, seeds the development data, serves the API with Uvicorn at http://localhost:8000, and serves the frontend with the Vite dev server at http://localhost:5173. Uvicorn reloads when files in `app/` change, and Vite when files in `frontend/src/` change. Set `BACKEND_PORT`, `DB_PORT` or `FRONTEND_PORT` to use other host ports (`BACKEND_PORT=8001 DB_PORT=5436 FRONTEND_PORT=5174 docker compose up`). Rebuild after changing `requirements.txt` or `frontend/package.json`.
 
 ## Tests
 

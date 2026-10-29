@@ -6,7 +6,7 @@ services:
       POSTGRES_PASSWORD: pet_health
       POSTGRES_DB: pet_health
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "${DB_PORT:-5435}:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
