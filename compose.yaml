@@ -33,5 +33,19 @@ services:
       - ./backend/app:/code/app
       - ./backend/migrations:/code/migrations
 
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      - backend
+    # Vite reloads the app when these files change.
+    volumes:
+      - ./frontend/src:/code/src
+      - ./frontend/public:/code/public
+      - ./frontend/index.html:/code/index.html
+
 volumes:
   db-data:

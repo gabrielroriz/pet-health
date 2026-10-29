@@ -105,7 +105,7 @@ From the repository root:
 docker compose up --build
 ```
 
-This starts PostgreSQL, runs the migrations, seeds the development data, and serves the API with Uvicorn at http://localhost:8000. Uvicorn reloads when files in `app/` change. Set `BACKEND_PORT` or `DB_PORT` to use other host ports (`BACKEND_PORT=8001 DB_PORT=5435 docker compose up`). Rebuild after changing `requirements.txt`.
+This starts PostgreSQL, runs the migrations, seeds the development data, serves the API with Uvicorn at http://localhost:8000, and serves the frontend with the Vite dev server at http://localhost:5173. Uvicorn reloads when files in `app/` change, and Vite when files in `frontend/src/` change. Set `BACKEND_PORT`, `DB_PORT` or `FRONTEND_PORT` to use other host ports (`BACKEND_PORT=8001 DB_PORT=5435 FRONTEND_PORT=5174 docker compose up`). Rebuild after changing `requirements.txt` or `frontend/package.json`.
 
 ## Tests
 
