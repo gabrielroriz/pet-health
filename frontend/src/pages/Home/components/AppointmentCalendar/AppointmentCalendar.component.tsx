@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button } from '../../../../components/Button/index.tsx'
 import { Text } from '../../../../components/Text/index.tsx'
+import { useAppointmentLabels } from '../../../../modules/appointments/hooks/useAppointmentLabels.ts'
 import { useAppointments } from '../../../../modules/appointments/hooks/useAppointments.ts'
 import styles from './AppointmentCalendar.module.scss'
 import type { AppointmentCalendarProps } from './AppointmentCalendar.types.ts'
@@ -16,6 +17,7 @@ function startOfMonth(date: Date): Date {
 
 export function AppointmentCalendar({ initialMonth }: AppointmentCalendarProps) {
   const { data: appointments, isPending, isError } = useAppointments()
+  const labelsFor = useAppointmentLabels()
   const [today] = useState(() => dayKey(new Date()))
   const [month, setMonth] = useState(() => startOfMonth(initialMonth ?? new Date()))
 
@@ -84,23 +86,26 @@ export function AppointmentCalendar({ initialMonth }: AppointmentCalendarProps) 
                   </time>
                   {dayAppointments.length > 0 && (
                     <ul className={styles.appointmentCalendarEvents}>
-                      {dayAppointments.map((appointment) => (
-                        <li
-                          key={appointment.id}
-                          className={styles.appointmentCalendarEvent}
-                          title={`${appointment.petName} · ${appointment.reason} · ${appointment.durationMinutes} min`}
-                        >
-                          <span className={styles.appointmentCalendarEventPet}>
-                            {appointment.petName}
-                          </span>
-                          <time
-                            dateTime={appointment.scheduledAt}
-                            className={styles.appointmentCalendarEventTime}
+                      {dayAppointments.map((appointment) => {
+                        const labels = labelsFor(appointment)
+                        return (
+                          <li
+                            key={appointment.id}
+                            className={styles.appointmentCalendarEvent}
+                            title={`${labels.petName} · ${appointment.reason} · ${labels.veterinarianName}, ${labels.hospitalName}`}
                           >
-                            {timeFormat.format(new Date(appointment.scheduledAt))}
-                          </time>
-                        </li>
-                      ))}
+                            <span className={styles.appointmentCalendarEventPet}>
+                              {labels.petName}
+                            </span>
+                            <time
+                              dateTime={appointment.startsAt}
+                              className={styles.appointmentCalendarEventTime}
+                            >
+                              {timeFormat.format(new Date(appointment.startsAt))}
+                            </time>
+                          </li>
+                        )
+                      })}
                     </ul>
                   )}
                 </div>

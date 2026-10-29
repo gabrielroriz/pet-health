@@ -1,16 +1,23 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, test } from 'vitest'
+import type { Appointment } from '../../../../modules/appointments/api/appointmentApi.ts'
 import { appointmentsQueryKey } from '../../../../modules/appointments/hooks/useAppointments.ts'
+import { AuthContext } from '../../../../modules/auth/context/AuthContext.ts'
+import { petsQueryKey } from '../../../../modules/pets/hooks/usePets.ts'
 import { AppointmentCalendar } from './AppointmentCalendar.component.tsx'
 import { dayKey, groupByDay, monthGrid } from './AppointmentCalendar.utils.ts'
 
-const thor = {
+const thor: Appointment = {
   id: '1',
-  petName: 'Thor',
-  scheduledAt: new Date(2026, 10, 2, 10, 0).toISOString(),
+  petId: 'p1',
+  hospitalId: 'h1',
+  veterinarianId: 'v1',
+  startsAt: new Date(2026, 10, 2, 10, 0).toISOString(),
+  endsAt: new Date(2026, 10, 2, 10, 30).toISOString(),
   durationMinutes: 30,
   reason: 'Vaccines',
+  status: 'scheduled',
 }
 
 describe('monthGrid', () => {
@@ -42,9 +49,12 @@ describe('AppointmentCalendar', () => {
   test('shows the month and its appointments', () => {
     const queryClient = new QueryClient()
     queryClient.setQueryData(appointmentsQueryKey, [thor])
+    queryClient.setQueryData(petsQueryKey, [{ id: 'p1', name: 'Thor' }])
     const html = renderToString(
       <QueryClientProvider client={queryClient}>
-        <AppointmentCalendar initialMonth={new Date(2026, 10, 20)} />
+        <AuthContext value={{ token: 'token', saveToken: () => {}, logOut: () => {} }}>
+          <AppointmentCalendar initialMonth={new Date(2026, 10, 20)} />
+        </AuthContext>
       </QueryClientProvider>,
     )
     expect(html).toContain('dateTime="2026-11"')

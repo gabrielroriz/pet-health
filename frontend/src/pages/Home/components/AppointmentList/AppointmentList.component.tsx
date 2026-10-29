@@ -1,4 +1,5 @@
 import { Text } from '../../../../components/Text/index.tsx'
+import { useAppointmentLabels } from '../../../../modules/appointments/hooks/useAppointmentLabels.ts'
 import { useAppointments } from '../../../../modules/appointments/hooks/useAppointments.ts'
 import { useCancelAppointment } from '../../../../modules/appointments/hooks/useCancelAppointment.ts'
 import { AppointmentCard } from '../AppointmentCard/index.tsx'
@@ -6,6 +7,7 @@ import styles from './AppointmentList.module.scss'
 
 export function AppointmentList() {
   const { data: appointments, isPending, isError } = useAppointments()
+  const labelsFor = useAppointmentLabels()
   const cancel = useCancelAppointment()
 
   if (isPending) {
@@ -24,6 +26,7 @@ export function AppointmentList() {
         <li key={appointment.id}>
           <AppointmentCard
             appointment={appointment}
+            labels={labelsFor(appointment)}
             onCancel={cancel.mutate}
             cancelling={cancel.isPending && cancel.variables === appointment.id}
           />

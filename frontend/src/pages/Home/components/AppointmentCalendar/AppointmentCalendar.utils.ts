@@ -29,7 +29,7 @@ export function monthGrid(month: Date): Date[][] {
 export function groupByDay(appointments: Appointment[]): Map<string, Appointment[]> {
   const groups = new Map<string, Appointment[]>()
   for (const appointment of appointments) {
-    const key = dayKey(new Date(appointment.scheduledAt))
+    const key = dayKey(new Date(appointment.startsAt))
     groups.set(key, [...(groups.get(key) ?? []), appointment])
   }
   return groups
