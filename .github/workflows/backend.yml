@@ -13,6 +13,21 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: pet_health
+          POSTGRES_PASSWORD: pet_health
+          POSTGRES_DB: pet_health
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U pet_health -d pet_health"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgresql+psycopg://pet_health:pet_health@localhost:5432/pet_health
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

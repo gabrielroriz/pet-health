@@ -33,6 +33,17 @@ def test_gets_registered_pet(client, auth_headers):
     assert response.json()["id"] == pet_id
 
 
+def test_lists_pets_of_logged_in_user_by_name(client, auth_headers):
+    register(client, auth_headers, name="Thor")
+    register(client, auth_headers, name="Luna", species="cat")
+    register(client, log_in(client, "bob@example.com"), name="Rex")
+
+    response = client.get("/pets", headers=auth_headers)
+
+    assert response.status_code == 200
+    assert [pet["name"] for pet in response.json()] == ["Luna", "Thor"]
+
+
 @pytest.mark.parametrize(
     "payload",
     [
@@ -74,4 +85,5 @@ def test_pet_routes_require_token(client, auth_headers):
     pet_id = register(client, auth_headers).json()["id"]
 
     assert register(client, headers={}).status_code == 401
+    assert client.get("/pets").status_code == 401
     assert client.get(f"/pets/{pet_id}").status_code == 401

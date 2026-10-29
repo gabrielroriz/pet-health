@@ -10,6 +10,7 @@ class User:
     id: UUID = field(default_factory=uuid4)
 
     def __post_init__(self) -> None:
+        # Normalize so the same email always maps to the same user.
         self.email = self.email.strip().lower()
         if not self.email:
             raise InvalidUserData("Email must not be blank.")

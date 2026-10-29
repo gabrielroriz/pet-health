@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.domain.pet import Pet, Species
 
 
+# Body of POST /pets; unknown fields are rejected (422).
 class RegisterPetRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -16,6 +17,7 @@ class RegisterPetRequest(BaseModel):
     breed: str | None = Field(default=None, max_length=100)
 
 
+# JSON returned for a pet.
 class PetResponse(BaseModel):
     id: UUID
     owner_id: UUID

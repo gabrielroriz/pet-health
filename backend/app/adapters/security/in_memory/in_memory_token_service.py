@@ -9,9 +9,11 @@ class InMemoryTokenService:
         self._tokens: dict[str, UUID] = {}
 
     def issue(self, user_id: UUID) -> str:
+        # A random, unguessable token remembered for this user.
         token = secrets.token_urlsafe(32)
         self._tokens[token] = user_id
         return token
 
     def verify(self, token: str) -> UUID | None:
+        # None for unknown tokens, which Authenticate turns into a 401.
         return self._tokens.get(token)

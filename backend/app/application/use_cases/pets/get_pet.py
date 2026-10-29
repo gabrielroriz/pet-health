@@ -10,8 +10,10 @@ class GetPet:
         self.pets = pets
 
     def execute(self, user_id: UUID, pet_id: UUID) -> Pet:
+        # Load the pet (404 if it doesn't exist).
         pet = self.pets.get(pet_id)
         if pet is None:
             raise PetNotFound(f"Pet {pet_id} not found.")
+        # Only its owner may see it (403).
         pet.ensure_owned_by(user_id)
         return pet

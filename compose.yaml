@@ -1,9 +1,37 @@
 services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: pet_health
+      POSTGRES_PASSWORD: pet_health
+      POSTGRES_DB: pet_health
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pet_health -d pet_health"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
   backend:
     build: ./backend
     ports:
       - "${BACKEND_PORT:-8000}:8000"
-    # Restart the server when the code changes.
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://pet_health:pet_health@db:5432/pet_health
+    depends_on:
+      db:
+        condition: service_healthy
+    # Migrate and seed development data, then restart the server when the code changes.
+    command:
+      - sh
+      - -c
+      - alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     volumes:
       - ./backend/app:/code/app
+      - ./backend/migrations:/code/migrations
+
+volumes:
+  db-data:

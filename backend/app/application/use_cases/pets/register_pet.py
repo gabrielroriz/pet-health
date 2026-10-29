@@ -17,6 +17,7 @@ class RegisterPet:
         birth_date: date | None = None,
         breed: str | None = None,
     ) -> Pet:
+        # Building the Pet runs its business rules, so an invalid pet is never saved.
         pet = Pet(
             owner_id=owner_id,
             name=name,
@@ -24,5 +25,6 @@ class RegisterPet:
             birth_date=birth_date,
             breed=breed,
         )
+        # Store it, owned by the logged-in user.
         self.pets.add(pet)
         return pet

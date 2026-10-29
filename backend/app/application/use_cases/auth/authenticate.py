@@ -10,8 +10,11 @@ class Authenticate:
         self.tokens = tokens
 
     def execute(self, token: str) -> User:
+        # Find which user the token was issued to.
         user_id = self.tokens.verify(token)
+        # Load that user from the database.
         user = self.users.get(user_id) if user_id is not None else None
+        # Unknown token or missing user: 401.
         if user is None:
             raise NotAuthenticated("Invalid or expired token.")
         return user

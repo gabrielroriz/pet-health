@@ -17,9 +17,11 @@ def log_in(
     use_case: Annotated[LogIn, Depends(get_log_in)],
 ) -> TokenResponse:
     """Development login: no password, unknown emails get a new user."""
+    # Find or create the user by email and hand back a new bearer token.
     return TokenResponse(access_token=use_case.execute(payload.email))
 
 
 @router.get("/me", response_model=UserResponse)
 def read_me(user: Annotated[User, Depends(get_current_user)]) -> UserResponse:
+    # get_current_user already turned the token into a user.
     return UserResponse.from_domain(user)

@@ -11,10 +11,13 @@ class LogIn:
         self.tokens = tokens
 
     def execute(self, email: str) -> str:
+        # Building the User normalizes the email and rejects a blank one (422).
         user = User(email=email)
+        # The first login creates the user; later logins reuse it.
         existing = self.users.get_by_email(user.email)
         if existing is None:
             self.users.add(user)
         else:
             user = existing
+        # Each login gets a fresh token.
         return self.tokens.issue(user.id)

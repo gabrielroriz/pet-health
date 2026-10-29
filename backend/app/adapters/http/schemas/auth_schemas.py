@@ -6,10 +6,12 @@ from pydantic import BaseModel, EmailStr
 from app.domain.user import User
 
 
+# Development login: just an email, no password.
 class LoginRequest(BaseModel):
     email: EmailStr
 
 
+# The token to send back as 'Authorization: Bearer <token>'.
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"

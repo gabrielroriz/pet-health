@@ -35,6 +35,62 @@ Content-Type: application/json
 GET {{baseUrl}}/pets/{{registerPet.response.body.$.id}}
 Authorization: Bearer {{token}}
 
+### List my pets (python -m app.seed gives ana@example.com two pets)
+# @name pets
+GET {{baseUrl}}/pets
+Authorization: Bearer {{token}}
+
+### List hospitals and their network
+# @name hospitals
+GET {{baseUrl}}/hospitals
+Authorization: Bearer {{token}}
+
+### List veterinarians and the hospitals they work at
+GET {{baseUrl}}/veterinarians
+Authorization: Bearer {{token}}
+
+### Veterinarians free at the first hospital at a given time (run "List hospitals" first)
+# @name available
+GET {{baseUrl}}/veterinarians/available?hospital_id={{hospitals.response.body.$[0].id}}&starts_at=2030-01-01T10:00:00Z&duration_minutes=30
+Authorization: Bearer {{token}}
+
+### Schedule an appointment (run "List my pets", "List hospitals" and "Veterinarians free" first)
+# @name schedule
+POST {{baseUrl}}/appointments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pet_id": "{{pets.response.body.$[0].id}}",
+  "hospital_id": "{{hospitals.response.body.$[0].id}}",
+  "veterinarian_id": "{{available.response.body.$[0].id}}",
+  "starts_at": "2030-01-01T10:00:00Z",
+  "duration_minutes": 30,
+  "reason": "Annual vaccines"
+}
+
+### Double booking: same veterinarian, overlapping time (409)
+POST {{baseUrl}}/appointments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "pet_id": "{{pets.response.body.$[1].id}}",
+  "hospital_id": "{{hospitals.response.body.$[0].id}}",
+  "veterinarian_id": "{{available.response.body.$[0].id}}",
+  "starts_at": "2030-01-01T10:15:00Z",
+  "duration_minutes": 30,
+  "reason": "Skin allergy follow-up"
+}
+
+### List my scheduled appointments
+GET {{baseUrl}}/appointments
+Authorization: Bearer {{token}}
+
+### Cancel the scheduled appointment (frees its time)
+POST {{baseUrl}}/appointments/{{schedule.response.body.$.id}}/cancel
+Authorization: Bearer {{token}}
+
 ### Invalid payload: unknown species (422)
 POST {{baseUrl}}/pets
 Authorization: Bearer {{token}}
